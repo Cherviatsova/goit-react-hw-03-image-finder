@@ -8,6 +8,8 @@ import {
 } from './Searchbar.styled';
 import PropTypes from 'prop-types';
 
+// import { ImSearch } from 'react-icons/fa';
+
 class Searchbar extends Component {
   static propTypes = {
     onSubmit: PropTypes.func.isRequired,
@@ -17,13 +19,12 @@ class Searchbar extends Component {
   };
 
   handleChange = e => {
-    const { searchQuery, value } = e.currentTarget;
-    this.setState({ [searchQuery]: value.toLowerCase().trim() });
+    this.setState({ searchQuery: e.currentTarget.value.toLowerCase().trim() });
   };
 
   handleSubmit = e => {
     e.preventDefault();
-    if (this.state.searchQuery.value.trim() === '') {
+    if (this.state.searchQuery.trim() === '') {
       alert(
         'Sorry, there are no images matching your search query. Please try again.'
       );
@@ -48,12 +49,12 @@ class Searchbar extends Component {
           </SearchFormButton>
 
           <SearchFormInput
-            value={this.searchQuery}
-            name="name"
+            value={this.state.searchQuery}
+            name="imgName"
             onChange={this.handleChange}
             type="text"
-            autocomplete="off"
-            autofocus
+            autoComplete="off"
+            autoFocus
             placeholder="Search images and photos"
           />
         </SearchForm>

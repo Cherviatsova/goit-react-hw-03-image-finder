@@ -1,25 +1,35 @@
-import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
-import React from 'react';
+import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import { ImageGalleryList } from './ImageGallery.styled';
 import PropTypes from 'prop-types';
 
 export default function ImageGallery({ images, onClickImage }) {
   return (
-    <ImageGalleryList>
-      {images.map(({ id, webformatURL, largeImageURL, alt }) => (
-        <ImageGalleryItem
-          key={id}
-          src={webformatURL}
-          alt={alt}
-          largeImageURL={largeImageURL}
-          onClickImage={onClickImage}
-        ></ImageGalleryItem>
-      ))}
-    </ImageGalleryList>
+    <div>
+      <ImageGalleryList>
+        {images.map(({ id, webformatURL, largeImageURL, tags }) => {
+          return (
+            <ImageGalleryItem
+              key={id}
+              webformatURL={webformatURL}
+              alt={tags}
+              largeImageURL={largeImageURL}
+              onClickImage={onClickImage}
+            />
+          );
+        })}
+      </ImageGalleryList>
+    </div>
   );
 }
 
 ImageGallery.propTypes = {
-  contacts: PropTypes.arrayOf(PropTypes.object).isRequired,
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      largeImageURL: PropTypes.string.isRequired,
+      tags: PropTypes.string.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+    })
+  ),
   onClickImage: PropTypes.func.isRequired,
 };

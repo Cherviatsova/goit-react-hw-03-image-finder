@@ -1,12 +1,12 @@
-import Searchbar from 'components/Searchbar/Searchbar';
+import Searchbar from './components/Searchbar/Searchbar';
 import React, { Component } from 'react';
-import ImageGallery from 'components/ImageGallery/ImageGallery';
-import Loader from 'components/Loader/Loader';
-import Button from 'components/Button/Button';
-import Modal from 'components/Modal/Modal';
+import ImageGallery from './components/ImageGallery/ImageGallery';
+import Loader from './components/Loader/Loader';
+import Button from './components/Button/Button';
+import Modal from './components/Modal/Modal';
 import './App.css';
 import 'react-loader-spinner';
-import searchImages from 'services/api';
+import searchImages from './services/api';
 
 class App extends Component {
   state = {
@@ -16,7 +16,7 @@ class App extends Component {
     status: 'idle',
     showModal: false,
     largeImageURL: '',
-    loadMore: '',
+    loadMore: false,
   };
 
   componentDidUpdate(_, prevState) {
@@ -28,34 +28,47 @@ class App extends Component {
       this.setState({ images: [], page: 1, status: 'pending' });
       this.getLoadImg(nextQuery, page);
     }
+    if (prevState.page !== page && page !== 1) {
+      this.getLoadImg(nextQuery, page);
+    }
   }
+
   getLoadImg = (searchQuery, pageNumber) => {
-    searchImages(searchQuery, pageNumber).then(images => {
-      if (!images.hits.length) {
-        alert('Image not found');
+    searchImages(searchQuery, pageNumber)
+      .then(images => {
+        if (!images.hits.length) {
+          alert('Image not found');
+          this.setState({
+            error: 'Error. Try again',
+            status: 'rejected',
+          });
+        } else {
+          const data = images.hits.map(
+            ({ id, webformatURL, largeImageURL }) => {
+              return {
+                id,
+                webformatURL,
+                largeImageURL,
+              };
+            }
+          );
+          this.setState(prevState => ({
+            images: [...prevState.images, ...data],
+            status: 'resolved',
+            loadMore: true,
+          }));
+        }
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        });
+      })
+      .catch(error =>
         this.setState({
-          error: 'Error. Try again',
+          error,
           status: 'rejected',
-        });
-      } else {
-        const data = images.hits.map(({ id, webformatURL, largeImageURL }) => {
-          return {
-            id,
-            webformatURL,
-            largeImageURL,
-          };
-        });
-        this.setState(prevState => ({
-          images: [...prevState.images, ...data],
-          status: 'resolved',
-          loadMore: true,
-        }));
-      }
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: 'smooth',
-      });
-    });
+        })
+      );
   };
 
   handleFormSubmit = searchQuery => {

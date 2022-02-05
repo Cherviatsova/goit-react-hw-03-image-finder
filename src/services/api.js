@@ -1,9 +1,9 @@
 const KEY = '24522433-b765e3bcd233b8a39427fcc1c';
-const BASE_URL = 'https://pixabay.com/api';
+const BASE_URL = 'https://pixabay.com/api/';
 
-function searchImages(page, per_page) {
+function searchImages(query, page) {
   return fetch(
-    `${BASE_URL}/?q=cat&page=${page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=${per_page}`
+    `${BASE_URL}?q=${query}&page=${page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=12`
   ).then(response => {
     if (response.ok) {
       return response.json();
